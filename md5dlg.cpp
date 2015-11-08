@@ -198,7 +198,7 @@ BOOL Cmd5dlg::MD5SUM(CString FileName)
 			FORMAT_MESSAGE_FROM_SYSTEM,
 			NULL,
 			GetLastError(),
-			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // デフォルト ユーザー言語 
+			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 			(LPTSTR) &lpMessageBuffer,
 			0,
 			NULL );
