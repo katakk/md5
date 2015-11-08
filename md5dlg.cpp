@@ -151,10 +151,10 @@ BOOL Cmd5dlg::MD5SUM(CString FileName)
 	int read;
 	DWORD j;
 	CFile f;
+	CFileException e;
 	CString str;
 
-
-	if( f.Open(FileName, CFile::modeRead | CFile::typeBinary | CFile::shareDenyNone ))
+	if( f.Open(FileName, CFile::modeRead | CFile::typeBinary | CFile::shareDenyNone, &e ))
 	{
 		CString sig;
 #ifndef __WINCRYPT_H__
@@ -183,8 +183,28 @@ BOOL Cmd5dlg::MD5SUM(CString FileName)
 			sig += str;
 		}
 
-		str.Format("%s  %s [%d]\r\n", sig, f.GetFileName(), clock() - start); /* @@DISPLAY PATTERN@@ */
+#ifdef DEBUG
+		str.Format("%s  %s [%d msec]\r\n", sig, f.GetFileName(), clock() - start); /* @@DISPLAY PATTERN@@ */
+#else
+		str.Format("%s  %s\r\n", sig, f.GetFileName()); /* @@DISPLAY PATTERN@@ */
+#endif
 		m_edit += str;
+
+
+	} else {
+		LPVOID lpMessageBuffer;
+		FormatMessage(
+			FORMAT_MESSAGE_ALLOCATE_BUFFER |
+			FORMAT_MESSAGE_FROM_SYSTEM,
+			NULL,
+			GetLastError(),
+			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // デフォルト ユーザー言語 
+			(LPTSTR) &lpMessageBuffer,
+			0,
+			NULL );
+		str.Format("%s  %s\r\n", (LPTSTR) lpMessageBuffer, FileName); /* @@DISPLAY PATTERN@@ */
+		m_edit += str;
+		LocalFree( lpMessageBuffer );
 	}
 
 	SetWindowText(m_title);
