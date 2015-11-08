@@ -29,3 +29,12 @@ RSAなんとか呪文を書けば、FreeBSD由来のコードが使えてすこ�
 | 06-アフター5を楽しむ!女子会トーク&#9829;.wav   |    688 msec         |    1250 msec        |
 | 07-エンディング.wav                            |    218 msec         |     390 msec        |
 
+# OpenBSD MD5
+http://cvsweb.openbsd.org/cgi-bin/cvsweb/src/lib/libc/hash/md5.c
+
+# Crypto API
+Windows自体が持っている暗号化ライブラリ
+
+
+
+
