@@ -44,7 +44,7 @@ BOOL Cmd5dlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);
 
 	DragAcceptFiles();
-	m_font.CreatePointFont( 40 * ((m_toggle++ % 8) + 1), "‚l‚r ƒSƒVƒbƒN" );
+	m_font.CreatePointFont( 40 * ((m_toggle++ % 8) + 1), _T("‚l‚r ƒSƒVƒbƒN") );
 	m_editctrl.SetFont(&m_font, TRUE);
 	GetWindowText(m_title);
 
@@ -114,7 +114,7 @@ BOOL Cmd5dlg::UpdateWindow(CFile* f)
 	static CString back; /* cache */
 	VERIFY(PumpMessage()); /* pump message to other window */
 
-	str.Format( "%s %3I64u%% %s", 
+	str.Format( _T("%s %3I64u%% %s"), 
 		m_title, 
 		f->GetPosition() * 100 / f->GetLength(), 
 		f->GetFileName()
@@ -144,7 +144,7 @@ BOOL Cmd5dlg::MD5SUM(CString FileName)
 	static unsigned char signature[16];
 	DWORD signature_len = sizeof(signature);
 
-	const clock_t bufferd_clock = 50; /* @@ */
+	const clock_t bufferd_clock = 80; /* @@ */
 	clock_t start = clock();
 	clock_t before = clock() + bufferd_clock;
 
@@ -179,14 +179,14 @@ BOOL Cmd5dlg::MD5SUM(CString FileName)
 #endif
 		UpdateWindow(&f);
 		for (j = 0; j < signature_len; j++) {
-			str.Format("%02x", signature[j]);
+			str.Format(_T("%02x"), signature[j]);
 			sig += str;
 		}
 
-#ifdef DEBUG
-		str.Format("%s  %s [%d msec]\r\n", sig, f.GetFileName(), clock() - start); /* @@DISPLAY PATTERN@@ */
+#if 0 /*1*/
+		str.Format(_T("%s  %s [%d msec]\r\n"), sig, f.GetFileName(), clock() - start); /* @@DISPLAY PATTERN@@ */
 #else
-		str.Format("%s  %s\r\n", sig, f.GetFileName()); /* @@DISPLAY PATTERN@@ */
+		str.Format(_T("%s  %s\r\n"), sig, f.GetFileName()); /* @@DISPLAY PATTERN@@ */
 #endif
 		m_edit += str;
 
@@ -202,7 +202,7 @@ BOOL Cmd5dlg::MD5SUM(CString FileName)
 			(LPTSTR) &lpMessageBuffer,
 			0,
 			NULL );
-		str.Format("%s  %s\r\n", (LPTSTR) lpMessageBuffer, FileName); /* @@DISPLAY PATTERN@@ */
+		str.Format(_T("%s  %s\r\n"), (LPTSTR) lpMessageBuffer, FileName); /* @@DISPLAY PATTERN@@ */
 		m_edit += str;
 		LocalFree( lpMessageBuffer );
 	}
@@ -265,7 +265,7 @@ void Cmd5dlg::OnSysCommand(UINT nID, LPARAM lParam)
 //		CString str;
 //		str.Format("%x", nID );
 //		SetWindowText(str + "‚Ü‚¶‚Å‚Á");
-	m_font.CreatePointFont( 40 * ((m_toggle++ % 8) + 1), "‚l‚r ƒSƒVƒbƒN" );
+	m_font.CreatePointFont( 40 * ((m_toggle++ % 8) + 1), _T("‚l‚r ƒSƒVƒbƒN") );
 	m_editctrl.SetFont(&m_font, TRUE);
 	} else {
 		CDialog::OnSysCommand(nID, lParam);
