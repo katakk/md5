@@ -4,6 +4,8 @@
 #include "md5dlg.h"
 #include "obsd_md5.h"
 
+#ifndef __WINCRYPT_H__
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -285,3 +287,4 @@ static void MD5DigestToBase10x8(unsigned char digest[16], char zDigest[50]){
   zDigest[j] = 0;
 }
 
+#endif /* __WINCRYPT_H__ */

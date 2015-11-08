@@ -108,51 +108,92 @@ BOOL Cmd5dlg::PumpMessage()
 	return TRUE;
 }
 
+BOOL Cmd5dlg::UpdateWindow(CFile* f)
+{
+	CString str;
+	static CString back; /* cache */
+	VERIFY(PumpMessage()); /* pump message to other window */
+
+	str.Format( "%s %3I64u%% %s", 
+		m_title, 
+		f->GetPosition() * 100 / f->GetLength(), 
+		f->GetFileName()
+		);
+
+	if( str != back ) {
+		SetWindowText(str);
+		back = str;
+	}
+
+	return TRUE;
+}
+
+#define time_after(a,b)  (((long)(b) - (long)(a) < 0))
+#define time_before(a,b) time_after(b,a)
 BOOL Cmd5dlg::MD5SUM(CString FileName)
 {
+#ifndef __WINCRYPT_H__
 	struct MD5Context md5c;
-	unsigned char Buff[1024];
-	int read;
-	unsigned char signature[16];
-	int j;
+#else
+	HCRYPTPROV hCryptProv = NULL;
+	HCRYPTHASH hHash;
+	VERIFY(CryptAcquireContext(&hCryptProv, NULL, NULL, PROV_RSA_FULL, 0));
+#endif
 
+	static unsigned char Buff[1024*32];
+	static unsigned char signature[16];
+	DWORD signature_len = sizeof(signature);
+
+	const clock_t bufferd_clock = 50; /* @@ */
+	clock_t start = clock();
+	clock_t before = clock() + bufferd_clock;
+
+	int read;
+	DWORD j;
 	CFile f;
 	CString str;
+
+
 	if( f.Open(FileName, CFile::modeRead | CFile::typeBinary | CFile::shareDenyNone ))
 	{
 		CString sig;
-		CString back;
+#ifndef __WINCRYPT_H__
 		MD5Init(&md5c);
+#else
+		VERIFY(CryptCreateHash(hCryptProv, CALG_MD5, 0, 0, &hHash));
+#endif
 		while( (read = f.Read(Buff, sizeof(Buff) )) > 0 ) {
-			MD5Update(&md5c, Buff, ( unsigned int) read );
-			if(!PumpMessage()) return FALSE;
-
-			str.Format( "%s %3I64u%% %s", 
-				m_title, 
-				f.GetPosition() * 100 / f.GetLength(), 
-				f.GetFileName()
-				);
-
-			if( str != back ) {
-				SetWindowText(str);
-				back = str;
-			}
-
+#ifndef __WINCRYPT_H__
+			MD5Update(&md5c, Buff, (unsigned int) read );
+#else
+			VERIFY(CryptHashData(hHash, Buff, ( unsigned int) read, 0));
+#endif
+			if(time_before(clock(), before)) continue;
+			before = clock() + bufferd_clock;
+			UpdateWindow(&f);
 		}
+#ifndef __WINCRYPT_H__
 		MD5Final(signature, &md5c);
-		
-		for (j = 0; j < sizeof signature; j++) {
+#else
+		VERIFY(CryptGetHashParam(hHash, HP_HASHVAL, signature, &signature_len, NULL));
+#endif
+		UpdateWindow(&f);
+		for (j = 0; j < signature_len; j++) {
 			str.Format("%02x", signature[j]);
 			sig += str;
 		}
 
-		str.Format("%s  %s\r\n", sig, f.GetFileName()); /* @@DISPLAY PATTERN@@ */
+		str.Format("%s  %s [%d]\r\n", sig, f.GetFileName(), clock() - start); /* @@DISPLAY PATTERN@@ */
 		m_edit += str;
 	}
 
 	SetWindowText(m_title);
 	return TRUE;
 }
+
+
+
+
 
 void Cmd5dlg::OnDropFiles(HDROP hDropInfo)
 {

@@ -15,6 +15,7 @@ protected:
 private:
 	BOOL MD5SUM(CString FileName);
 	BOOL PumpMessage();
+	BOOL UpdateWindow(CFile* f);
 
 protected:
 	HICON m_hIcon;
