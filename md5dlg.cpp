@@ -2,8 +2,6 @@
 #include "md5.h"
 #include "md5dlg.h"
 
-#include <wincrypt.h> 
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -14,6 +12,23 @@ Cmd5dlg::Cmd5dlg(CWnd* pParent /*=NULL*/)
 {
 	m_toggle = 1;
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+
+
+	/*
+	* CALG_MD5	:
+	* MD5 hashing algorithm.
+	* This algorithm is supported by the Microsoft Base Cryptographic Provider.
+	*
+	* CALG_SHA1 :
+	* CALG_SHA1	0x00008004	Same as CALG_SHA.
+	* This algorithm is supported by the Microsoft Base Cryptographic Provider.
+	*
+	* CALG_SHA_256 : (not suppoer normal XP)
+	* Windows XP with SP3:  This algorithm is supported by 
+	* the Microsoft Enhanced RSA and AES Cryptographic Provider (Prototype).
+	*/
+	m_argid = CALG_MD5;
+
 }
 
 void Cmd5dlg::DoDataExchange(CDataExchange* pDX)
@@ -47,12 +62,26 @@ BOOL Cmd5dlg::OnInitDialog()
 	DragAcceptFiles();
 	m_font.CreatePointFont( 40 * ((m_toggle++ % 8) + 1), _T("‚l‚r ƒSƒVƒbƒN") );
 	m_editctrl.SetFont(&m_font, TRUE);
-	GetWindowText(m_title);
-#if (!USE_WINCRIPTAPI)
-	m_title += _T("o");
-#endif
+
+//	GetWindowText(m_title);
+	m_title = _T("?");
+	m_title = _T("?");
+	if (GET_ALG_SID(m_argid) == ALG_SID_MD2) m_title = _T("md2");
+	if (GET_ALG_SID(m_argid) == ALG_SID_MD4) m_title = _T("md4");
+	if (GET_ALG_SID(m_argid) == ALG_SID_MD5) m_title = _T("md5");
+	if (GET_ALG_SID(m_argid) == ALG_SID_SHA) m_title = _T("sha");
+	if (GET_ALG_SID(m_argid) == ALG_SID_SHA1) m_title = _T("sha1");
+	if (GET_ALG_SID(m_argid) == ALG_SID_MAC) m_title = _T("mac");
+	if (GET_ALG_SID(m_argid) == ALG_SID_SSL3SHAMD5) m_title = _T("ssl3shamd5");
+	if (GET_ALG_SID(m_argid) == ALG_SID_HMAC) m_title = _T("hmac");
+	if (GET_ALG_SID(m_argid) == ALG_SID_TLS1PRF) m_title = _T("tls1prf");
+	if (GET_ALG_SID(m_argid) == ALG_SID_HASH_REPLACE_OWF) m_title = _T("hash_replace_owf");
+	if (GET_ALG_SID(m_argid) == ALG_SID_SHA_256) m_title = _T("sha256");
+	if (GET_ALG_SID(m_argid) == ALG_SID_SHA_384) m_title = _T("sha384");
+	if (GET_ALG_SID(m_argid) == ALG_SID_SHA_512) m_title = _T("sha512");
+
 #if BENCH_MARK
-	m_title += _T("B");
+	m_title += _T("*bench*");
 #endif
 	SetWindowText(m_title);
 
@@ -149,7 +178,7 @@ BOOL Cmd5dlg::MD5SUM(CString FileName)
 #endif
 
 	static unsigned char Buff[1024*32];
-	static unsigned char signature[16];
+	static unsigned char signature[128];
 	DWORD signature_len = sizeof(signature);
 
 	const clock_t bufferd_clock = 80; /* @@ */
@@ -165,7 +194,7 @@ BOOL Cmd5dlg::MD5SUM(CString FileName)
 	if( f.Open(FileName, CFile::modeRead | CFile::typeBinary | CFile::shareDenyNone, &e ))
 	{
 		CString sig;
-		VERIFY(CryptCreateHash(hCryptProv, CALG_MD5, 0, 0, &hHash));
+		VERIFY(CryptCreateHash(hCryptProv, m_argid, 0, 0, &hHash));
 		while( (read = f.Read(Buff, sizeof(Buff) )) > 0 ) {
 			VERIFY(CryptHashData(hHash, Buff, ( unsigned int) read, 0));
 			if(time_before(clock(), before)) continue;
@@ -173,7 +202,7 @@ BOOL Cmd5dlg::MD5SUM(CString FileName)
 			UpdateWindow(&f);
 		}
 		VERIFY(CryptGetHashParam(hHash, HP_HASHVAL, signature, &signature_len, NULL));
-		UpdateWindow(&f);
+		UpdateWindow(&f); /* pump. */
 		for (j = 0; j < signature_len; j++) {
 			str.Format(_T("%02x"), signature[j]);
 			sig += str;
@@ -261,8 +290,8 @@ void Cmd5dlg::OnSysCommand(UINT nID, LPARAM lParam)
 //		CString str;
 //		str.Format("%x", nID );
 //		SetWindowText(str + "‚Ü‚¶‚Å‚Á");
-	m_font.CreatePointFont( 40 * ((m_toggle++ % 8) + 1), _T("‚l‚r ƒSƒVƒbƒN") );
-	m_editctrl.SetFont(&m_font, TRUE);
+		m_font.CreatePointFont( 40 * ((m_toggle++ % 8) + 1), _T("‚l‚r ƒSƒVƒbƒN") );
+		m_editctrl.SetFont(&m_font, TRUE);
 	} else {
 		CDialog::OnSysCommand(nID, lParam);
 

@@ -12,6 +12,8 @@ md5 tool for Windows
 
 https://github.com/katakk/md5/blob/master/Release/md5.exe
 
+なまえをsha1.exeに変えるとsha1になるよ
+
 # 高速化検討等
 
 ###ベンチマーク結果

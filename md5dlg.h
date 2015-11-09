@@ -31,6 +31,7 @@ public:
 	afx_msg void OnClose();
 	CString m_edit;
 	CString m_title;
+	unsigned int m_argid;
 
 
 	CFont m_font;
