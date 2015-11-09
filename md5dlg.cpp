@@ -2,11 +2,7 @@
 #include "md5.h"
 #include "md5dlg.h"
 
-#if USE_WINCRIPTAPI
 #include <wincrypt.h> 
-#else
-#include "obsd_md5/md5.h"
-#endif
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -169,26 +165,14 @@ BOOL Cmd5dlg::MD5SUM(CString FileName)
 	if( f.Open(FileName, CFile::modeRead | CFile::typeBinary | CFile::shareDenyNone, &e ))
 	{
 		CString sig;
-#if (!USE_WINCRIPTAPI)
-		MD5Init(&md5c);
-#else
 		VERIFY(CryptCreateHash(hCryptProv, CALG_MD5, 0, 0, &hHash));
-#endif
 		while( (read = f.Read(Buff, sizeof(Buff) )) > 0 ) {
-#if (!USE_WINCRIPTAPI)
-			MD5Update(&md5c, Buff, (unsigned int) read );
-#else
 			VERIFY(CryptHashData(hHash, Buff, ( unsigned int) read, 0));
-#endif
 			if(time_before(clock(), before)) continue;
 			before = clock() + bufferd_clock;
 			UpdateWindow(&f);
 		}
-#if (!USE_WINCRIPTAPI)
-		MD5Final(signature, &md5c);
-#else
 		VERIFY(CryptGetHashParam(hHash, HP_HASHVAL, signature, &signature_len, NULL));
-#endif
 		UpdateWindow(&f);
 		for (j = 0; j < signature_len; j++) {
 			str.Format(_T("%02x"), signature[j]);

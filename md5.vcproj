@@ -138,28 +138,6 @@
 	<References>
 	</References>
 	<Files>
-		<Filter
-			Name="obsd_md5"
-			Filter="">
-			<File
-				RelativePath=".\obsd_md5\md5.cpp">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\obsd_md5\md5.h">
-			</File>
-		</Filter>
 		<File
 			RelativePath=".\config.h">
 		</File>
