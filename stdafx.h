@@ -30,4 +30,4 @@
 #include <afxcmn.h>
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
-#include <wincrypt.h>  /* @ if use OpenBSD MD5 then comment. */
+#include "config.h"

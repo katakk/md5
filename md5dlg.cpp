@@ -1,7 +1,12 @@
 #include "stdafx.h"
 #include "md5.h"
 #include "md5dlg.h"
-#include "obsd_md5.h"
+
+#if USE_WINCRIPTAPI
+#include <wincrypt.h> 
+#else
+#include "obsd_md5/md5.h"
+#endif
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -47,6 +52,13 @@ BOOL Cmd5dlg::OnInitDialog()
 	m_font.CreatePointFont( 40 * ((m_toggle++ % 8) + 1), _T("‚l‚r ƒSƒVƒbƒN") );
 	m_editctrl.SetFont(&m_font, TRUE);
 	GetWindowText(m_title);
+#if (!USE_WINCRIPTAPI)
+	m_title += _T("o");
+#endif
+#if BENCH_MARK
+	m_title += _T("B");
+#endif
+	SetWindowText(m_title);
 
 	return TRUE;
 }
@@ -157,13 +169,13 @@ BOOL Cmd5dlg::MD5SUM(CString FileName)
 	if( f.Open(FileName, CFile::modeRead | CFile::typeBinary | CFile::shareDenyNone, &e ))
 	{
 		CString sig;
-#ifndef __WINCRYPT_H__
+#if (!USE_WINCRIPTAPI)
 		MD5Init(&md5c);
 #else
 		VERIFY(CryptCreateHash(hCryptProv, CALG_MD5, 0, 0, &hHash));
 #endif
 		while( (read = f.Read(Buff, sizeof(Buff) )) > 0 ) {
-#ifndef __WINCRYPT_H__
+#if (!USE_WINCRIPTAPI)
 			MD5Update(&md5c, Buff, (unsigned int) read );
 #else
 			VERIFY(CryptHashData(hHash, Buff, ( unsigned int) read, 0));
@@ -172,7 +184,7 @@ BOOL Cmd5dlg::MD5SUM(CString FileName)
 			before = clock() + bufferd_clock;
 			UpdateWindow(&f);
 		}
-#ifndef __WINCRYPT_H__
+#if (!USE_WINCRIPTAPI)
 		MD5Final(signature, &md5c);
 #else
 		VERIFY(CryptGetHashParam(hHash, HP_HASHVAL, signature, &signature_len, NULL));
@@ -183,7 +195,7 @@ BOOL Cmd5dlg::MD5SUM(CString FileName)
 			sig += str;
 		}
 
-#if 0 /*1*/
+#if BENCH_MARK
 		str.Format(_T("%s  %s [%d msec]\r\n"), sig, f.GetFileName(), clock() - start); /* @@DISPLAY PATTERN@@ */
 #else
 		str.Format(_T("%s  %s\r\n"), sig, f.GetFileName()); /* @@DISPLAY PATTERN@@ */

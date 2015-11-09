@@ -4,8 +4,6 @@
 #  define uint32 unsigned long
 #endif
 
-#ifndef __WINCRYPT_H__
-
 /*      $OpenBSD: md5.h,v 1.16 2004/06/22 01:57:30 jfb Exp $    */
 
 /*
@@ -28,9 +26,13 @@
 #define MD5_DIGEST_STRING_LENGTH        (MD5_DIGEST_LENGTH * 2 + 1)
 
 typedef struct MD5Context {
+        int isInit;
         unsigned long state[4];                     /* state */
+		unsigned long buf[4];                       /* state 1.1 */
+		unsigned long bits[2];
         unsigned long long count;                        /* number of bits, mod 2^64 */
         unsigned char buffer[MD5_BLOCK_LENGTH];      /* input buffer */
+        unsigned char in[MD5_BLOCK_LENGTH];          /* input buffer */
 } MD5_CTX;
 
 void     MD5Init(MD5_CTX *);
@@ -44,4 +46,3 @@ char    *MD5FileChunk(const char *, char *, off_t, off_t);
 char    *MD5Data(const unsigned char *, size_t, char *);
 #endif /* _MD5_H_ */
 
-#endif /* __WINCRYPT_H__ */
