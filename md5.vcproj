@@ -138,56 +138,64 @@
 	<References>
 	</References>
 	<Files>
+		<Filter
+			Name="resorce"
+			Filter="">
+			<File
+				RelativePath=".\res\md5.ico">
+			</File>
+			<File
+				RelativePath=".\res\md5.manifest">
+			</File>
+			<File
+				RelativePath=".\md5.rc">
+			</File>
+			<File
+				RelativePath=".\res\md5.rc2">
+			</File>
+			<File
+				RelativePath=".\resource.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="source"
+			Filter="">
+			<File
+				RelativePath=".\md5.cpp">
+			</File>
+			<File
+				RelativePath=".\md5.h">
+			</File>
+			<File
+				RelativePath=".\md5dlg.cpp">
+			</File>
+			<File
+				RelativePath=".\md5dlg.h">
+			</File>
+			<File
+				RelativePath=".\stdafx.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\stdafx.h">
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\config.h">
 		</File>
 		<File
-			RelativePath=".\md5.cpp">
-		</File>
-		<File
-			RelativePath=".\md5.h">
-		</File>
-		<File
-			RelativePath=".\res\md5.ico">
-		</File>
-		<File
-			RelativePath=".\res\md5.manifest">
-		</File>
-		<File
-			RelativePath=".\md5.rc">
-		</File>
-		<File
-			RelativePath=".\res\md5.rc2">
-		</File>
-		<File
-			RelativePath=".\md5dlg.cpp">
-		</File>
-		<File
-			RelativePath=".\md5dlg.h">
-		</File>
-		<File
 			RelativePath=".\ReadMe.md">
-		</File>
-		<File
-			RelativePath=".\resource.h">
-		</File>
-		<File
-			RelativePath=".\stdafx.cpp">
-			<FileConfiguration
-				Name="Debug|Win32">
-				<Tool
-					Name="VCCLCompilerTool"
-					UsePrecompiledHeader="1"/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32">
-				<Tool
-					Name="VCCLCompilerTool"
-					UsePrecompiledHeader="1"/>
-			</FileConfiguration>
-		</File>
-		<File
-			RelativePath=".\stdafx.h">
 		</File>
 	</Files>
 	<Globals>
