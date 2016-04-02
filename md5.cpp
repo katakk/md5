@@ -23,7 +23,7 @@ BOOL Cmd5App::InitInstance()
 	CWinApp::InitInstance();
 
 	Cmd5dlg dlg;
-	if(0) { __asm{nop} };
+//	if(0) { __asm{nop} };
 	if(_tcsicmp(theApp.m_pszExeName, _T("MD2")) == 0) dlg.m_argid = CALG_MD2;
 	if(_tcsicmp(theApp.m_pszExeName, _T("MD4")) == 0) dlg.m_argid = CALG_MD4;
 	if(_tcsicmp(theApp.m_pszExeName, _T("MD5")) == 0) dlg.m_argid = CALG_MD5;
