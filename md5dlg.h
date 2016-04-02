@@ -13,6 +13,7 @@ protected:
 	virtual void OnCancel();
 
 private:
+	void ShowLastError(CString FileName);
 	BOOL MD5SUM(CString FileName);
 	BOOL PumpMessage();
 	BOOL UpdateWindow(CFile* f);

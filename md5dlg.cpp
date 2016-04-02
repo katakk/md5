@@ -165,17 +165,43 @@ BOOL Cmd5dlg::UpdateWindow(CFile* f)
 	return TRUE;
 }
 
+void Cmd5dlg::ShowLastError(CString FileName)
+{
+	CString str;
+	LPVOID lpMessageBuffer;
+	DWORD id = GetLastError();
+	FormatMessage(
+		FORMAT_MESSAGE_ALLOCATE_BUFFER |
+		FORMAT_MESSAGE_FROM_SYSTEM,
+		NULL,
+		id,
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		(LPTSTR) &lpMessageBuffer,
+		0,
+		NULL );
+	str.Format(_T("%x %s  %s\r\n"), id, (LPTSTR) lpMessageBuffer, FileName); /* @@DISPLAY PATTERN@@ */
+	m_edit += str;
+	LocalFree( lpMessageBuffer );
+}
+
 #define time_after(a,b)  (((long)(b) - (long)(a) < 0))
 #define time_before(a,b) time_after(b,a)
 BOOL Cmd5dlg::MD5SUM(CString FileName)
 {
-#ifndef __WINCRYPT_H__
-	struct MD5Context md5c;
-#else
+	LPCTSTR UserName = theApp.m_pszAppName;
 	HCRYPTPROV hCryptProv = NULL;
 	HCRYPTHASH hHash;
-	VERIFY(CryptAcquireContext(&hCryptProv, NULL, NULL, PROV_RSA_FULL, 0));
-#endif
+	if(!CryptAcquireContext(&hCryptProv, UserName, NULL, PROV_RSA_FULL, 0))
+	{
+		if (GetLastError() == NTE_BAD_KEYSET)
+		{
+			if(!CryptAcquireContext(&hCryptProv, UserName, NULL, PROV_RSA_FULL, CRYPT_NEWKEYSET))
+			{
+				ShowLastError(FileName);
+				return FALSE;
+			}
+		}
+	}
 
 	static unsigned char Buff[1024*32];
 	static unsigned char signature[128];
@@ -217,19 +243,8 @@ BOOL Cmd5dlg::MD5SUM(CString FileName)
 
 
 	} else {
-		LPVOID lpMessageBuffer;
-		FormatMessage(
-			FORMAT_MESSAGE_ALLOCATE_BUFFER |
-			FORMAT_MESSAGE_FROM_SYSTEM,
-			NULL,
-			GetLastError(),
-			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-			(LPTSTR) &lpMessageBuffer,
-			0,
-			NULL );
-		str.Format(_T("%s  %s\r\n"), (LPTSTR) lpMessageBuffer, FileName); /* @@DISPLAY PATTERN@@ */
-		m_edit += str;
-		LocalFree( lpMessageBuffer );
+		ShowLastError(FileName);
+		return FALSE;
 	}
 
 	SetWindowText(m_title);
