@@ -20,10 +20,10 @@ build_script:
   - >
     if %VC%==10
     "%SETENVCMD%" /x86 /release &&
-    nmake /nologo %* &&
+    msbuild md5.sln &&
     "%SETENVCMD%" /x64 /release &&
-    nmake /nologo %*
-  - if %VC%==14 "%VCVARSALLBAT14%" %ARCH% && nmake /nologo %*
+    msbuild md5.sln
+  - if %VC%==14 "%VCVARSALLBAT14%" %ARCH% && msbuild md5.sln
 
 #after_build:
 #
